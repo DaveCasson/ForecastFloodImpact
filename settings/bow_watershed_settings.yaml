@@ -1,0 +1,5 @@
+# Settings for running the Flood Forecast Impact workflow
+
+msc_open_data_settings:
+  api_url: https://api.weather.gc.ca/
+hydro_stations_csv: ../gis_data/hydrometric_Bow.csv
