@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def retrieve_real_time_data(stations, start_date, end_date, output_dir, output_suffix='', limit=10000):
+def retrieve_real_time_data(stations, start_date, end_date, api_url, output_dir, output_suffix='', limit=10000):
     """
     Retrieve real-time hydrometric data for a given time period and save it to CSV files.
     
@@ -35,6 +35,9 @@ def retrieve_real_time_data(stations, start_date, end_date, output_dir, output_s
     time_ = f"{start_date}/{end_date}"
     logger.info(f"Retrieving hydrometric data for the period {time_}")
 
+    # Instansiate features
+    oafeat = Features(api_url)
+    
     # List of stations with no water level data
     stations_without_data = []
 
@@ -107,24 +110,22 @@ def retrieve_real_time_data(stations, start_date, end_date, output_dir, output_s
             f"No water level data was returned, please check the query."
         )
     
-def retrieve_historic_data(stations, start_date, end_date, output_dir, output_suffix, limit=5000):
-    """
-    Retrieve historic hydrometric data for a given time period and save it to CSV files.
-
-    Parameters:
-    - stations (list): List of hydrometric station IDs to retrieve data for.
-    - start_date (date): Start date of the time period.
-    - end_date (date): End date of the time period.
-    - output_dir (str or Path): Directory path to save the output CSV files.
-    - output_suffix (str): Suffix to add to the output CSV file names.
-    - limit (int): Maximum number of data points to retrieve per station.
-
-    Returns:
-    - None
-    """
+def retrieve_historic_data(stations, collection, variables, start_date, end_date,  output_dir, output_suffix, api_url="https://api.weather.gc.ca/", limit=5000):
 
     time_ = f"{start_date}/{end_date}"
     logger.info(f"Retrieving hydrometric data for the period {time_}")
+
+    # Instansiate features
+    oafeat = Features(api_url)
+
+    # Set columns to be saved to the dataframe
+    base_columns = [
+                    "STATION_NUMBER",
+                    "STATION_NAME",
+                    "DATE",
+                    ]
+    df_columns = base_columns + variables
+    print(df_columns)
 
     # List of stations with no water level data
     stations_without_data = []
@@ -134,8 +135,8 @@ def retrieve_historic_data(stations, start_date, end_date, output_dir, output_su
 
         # Retrieval of water level data
         hydro_data = oafeat.collection_items(
-            "hydrometric-daily-mean",
-            datetime=time_,
+            collection,
+            #datetime=time_,
             limit=limit,
             STATION_NUMBER=station,
         )
@@ -153,12 +154,7 @@ def retrieve_historic_data(stations, start_date, end_date, output_dir, output_su
             # Creation of the data frame
             historical_data_df = pd.DataFrame(
                 historical_data_format,
-                columns=[
-                    "STATION_NUMBER",
-                    "STATION_NAME",
-                    "DATE",
-                    "DISCHARGE"
-                ],
+                columns=df_columns
             )
             
             # Detect and convert data types of columns
