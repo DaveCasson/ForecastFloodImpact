@@ -1,0 +1,13 @@
+# Settings for running the Flood Forecast Impact workflow
+
+msc_open_data_settings:
+  api_url: https://api.weather.gc.ca/
+  limit: 100000
+paths:
+  output_dir: '../data_output/'
+  gis_data: '../gis_data/'
+gis_data:
+  hydro_stns_csv: Bow_hydrometric_stns.csv
+  nsrps_stns_csv: nsrps_stn_locations.csv
+  basins_shp: Bow_Basins.shp
+  flowlines_shp: Bow_Flowlines.shp

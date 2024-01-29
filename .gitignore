@@ -1,5 +1,5 @@
 # Repo specific files to exclude
-output/
+data_output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
