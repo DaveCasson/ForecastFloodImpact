@@ -20,7 +20,7 @@ def plot_watershed_flowlines_stations(watershed_shapefile, flowlines_shapefile, 
 
     # Add OSM basemap
     osm = OSM()
-    ax.add_image(osm, 8)
+    ax.add_image(osm,10)
 
     # Reproject shapefiles to the same CRS as the basemap (Plate Carree - EPSG:4326)
     watershed = watershed.to_crs(epsg=4326)

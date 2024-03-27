@@ -155,3 +155,33 @@ def extract_station_from_grid(station, input_ds):
     station_data = input_ds.sel(lon=station_location.x, lat=station_location.y, method='nearest')
 
     return station_data
+
+def bias_correct_forecast(measurements, model):
+    
+    # Ensure both dataframes are sorted by index
+    measurements = measurements.sort_index()
+    model = model.sort_index()
+
+    # Find the last overlapping time
+    last_overlap_time = measurements.index.intersection(model.index).max()
+
+    # If there's no overlap, use the last time of the measurements dataframe
+    if pd.isna(last_overlap_time):
+        last_overlap_time = measurements.index[-1]
+
+    # Get the last measurement value
+    last_measurement_value = measurements.loc[last_overlap_time, 'DISCHARGE']
+
+    # Get the corresponding model value at the overlap time
+    if last_overlap_time in model.index:
+        last_model_value = model.loc[last_overlap_time, 'Discharge']
+    else:
+        last_model_value = model.iloc[0]['Discharge']
+
+    # Calculate the correction factor
+    correction_factor = last_measurement_value - last_model_value
+
+    # Apply the correction to the model dataframe
+    model['Discharge'] = model['Discharge'].apply(lambda x: x + correction_factor)
+
+    return model

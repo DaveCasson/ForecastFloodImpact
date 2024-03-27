@@ -2,33 +2,34 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
+from nsrps_data_access import bias_correct_forecast
 
-def convert_to_daily_mean(realtime_df, variable, date_col='DATETIME'):
+def convert_to_daily_mean(df, variable, date_col='DATETIME'):
     """
-    Convert the realtime_df DataFrame to daily mean values for the "LEVEL" and "DISCHARGE" columns.
+    Convert the df DataFrame to daily mean values for the "LEVEL" and "DISCHARGE" columns.
 
     Args:
-    realtime_df (DataFrame): Pandas DataFrame containing the realtime data with columns: DATETIME, STATION_NUMBER, STATION_NAME, LEVEL, DISCHARGE.
+    df (DataFrame): Pandas DataFrame containing the realtime data with columns: DATETIME, STATION_NUMBER, STATION_NAME, LEVEL, DISCHARGE.
 
     Returns:
     DataFrame: Pandas DataFrame with daily mean values for the "LEVEL" and "DISCHARGE" columns.
     """
     # Convert the "DATETIME" column to datetime type
-    realtime_df[date_col] = pd.to_datetime(realtime_df[date_col])
+    df[date_col] = pd.to_datetime(df[date_col])
 
     # Set the "DATETIME" column as the index
-    realtime_df.set_index(date_col, inplace=True)
+    df.set_index(date_col, inplace=True)
 
     # Resample the DataFrame to daily frequency and calculate the mean for "LEVEL" and "DISCHARGE" columns
-    daily_mean_df = realtime_df[variable].resample('D').mean()
+    daily_mean_df = df[variable].resample('D').mean()
 
     return daily_mean_df
 
-def add_thresholds(threshold_df, ax):
+def add_thresholds(threshold_df,station_number, ax):
 
     # Define different line styles
     # Define more line styles to ensure uniqueness
-    line_styles = ['--', '-.', ':', (0, (3, 5, 1, 5)), '-',(0, (5, 10)), (0, (1, 10)), (0, (5, 1)), 
+    line_styles = [(0, (5, 10)),'--', '-.', ':', (0, (3, 5, 1, 5)),'-', (0, (1, 10)), (0, (5, 1)), 
                 (0, (3, 1, 1, 1)), (0, (3, 10, 1, 10))]
 
     # Adjust alpha for less pronounced lines
@@ -36,8 +37,8 @@ def add_thresholds(threshold_df, ax):
     
     # Cycle through the line styles for different return periods
     for i, row in threshold_df.iterrows():
-        t_year = row['T-yrs']
-        value = row[threshold_df.columns[-1]]
+        t_year = row['T_yrs']
+        value = row[station_number]
         line_style = line_styles[i % len(line_styles)]
         ax.axhline(y=value, color='red', linestyle=line_style,alpha=alpha_value, label=f'T-{t_year} years')
 
@@ -113,7 +114,7 @@ def calculate_daily_percentiles_of_historic_data(df, variable):
 
     return historic_range_df_with_year
 
-def plot_annual_hydrograph_statistics(station_number,variable, historic_range_df, realtime_df, forecast_df=None, analysis_df=None, threshold_df=None, save_png=False, png_path=None): 
+def plot_annual_hydrograph_statistics(station_number,variable, historic_range_df, realtime_df, forecast_df=None, analysis_df=None, threshold_df=None,forecast_bias_corrected_df=None, save_png=False, png_path=None,): 
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10))
 
@@ -121,11 +122,13 @@ def plot_annual_hydrograph_statistics(station_number,variable, historic_range_df
     ax1.fill_between(historic_range_df.index, historic_range_df['Max'], historic_range_df['Min'], color='lightblue', alpha=0.3, label='Max-Min Range')
     ax1.fill_between(historic_range_df.index, historic_range_df['90th'], historic_range_df['10th'], color='skyblue', alpha=0.3, label='90-10 Percentile Range')
     ax1.fill_between(historic_range_df.index, historic_range_df['75th'], historic_range_df['25th'], color='steelblue', alpha=0.3, label='25-75 Percentile Range')
-    ax1.plot(realtime_df.index, realtime_df.values, color='red', label='Real Time Gauge')
+    ax1.plot(realtime_df.index, realtime_df.values, color='black', label='Real Time Gauge')
     if forecast_df is not None:
         ax1.plot(forecast_df.index, forecast_df.values, color='green', label='NSRPS Forecast')
+    if forecast_bias_corrected_df is not None:
+        ax1.plot(forecast_bias_corrected_df.index, forecast_bias_corrected_df.values, color='purple', label='NSRPS Forecast Bias Corrected')
     if analysis_df is not None:
-        ax1.scatter(analysis_df.index, analysis_df.values, color='black', label='NSRPS Analysis')
+        ax1.scatter(analysis_df.index, analysis_df.values, color='grey', label='NSRPS Analysis')
     ax1.set_title(f'{variable} Hydrograph for Complete Water Year, Station {station_number}')
     ax1.set_ylabel(variable)
     #ax1.set_ylim(0,)
@@ -134,7 +137,7 @@ def plot_annual_hydrograph_statistics(station_number,variable, historic_range_df
     
     #Check if threshold_df is not empty or None
     if threshold_df is not None:
-        add_thresholds(threshold_df,ax1)
+        add_thresholds(threshold_df,station_number, ax1)
  
     ax1.legend()
 
@@ -150,11 +153,13 @@ def plot_annual_hydrograph_statistics(station_number,variable, historic_range_df
     ax2.fill_between(historic_range_df.index, historic_range_df['Max'], historic_range_df['Min'], color='lightblue', alpha=0.3, label='Max-Min Range')
     ax2.fill_between(historic_range_df.index, historic_range_df['90th'], historic_range_df['10th'], color='skyblue', alpha=0.3, label='90-10 Percentile Range')
     ax2.fill_between(historic_range_df.index, historic_range_df['75th'], historic_range_df['25th'], color='steelblue', alpha=0.3, label='25-75 Percentile Range')
-    ax2.plot(realtime_df.index, realtime_df.values, color='red', label='Real Time Gauge')
+    ax2.plot(realtime_df.index, realtime_df.values, color='black', label='Real Time Gauge')
     if forecast_df is not None:
         ax2.plot(forecast_df.index, forecast_df.values, color='green', label='NSRPS Forecast')
+    if forecast_bias_corrected_df is not None:
+        ax2.plot(forecast_bias_corrected_df.index, forecast_bias_corrected_df.values, color='purple', label='NSRPS Forecast Bias Corrected')
     if analysis_df is not None:
-        ax2.scatter(analysis_df.index, analysis_df.values, color='black', label='NSRPS Analysis')
+        ax2.scatter(analysis_df.index, analysis_df.values, color='grey', label='NSRPS Analysis')
     ax2.set_title(f'{variable} for Real-Time and Forecasted Data, Station {station_number}')
     ax2.set_xlabel('Day of the Year')
     ax2.set_ylabel(variable)
@@ -165,12 +170,12 @@ def plot_annual_hydrograph_statistics(station_number,variable, historic_range_df
     # Set the x-axis limits of the zoomed-in hydrograph to match the range of realtime_df_daily.index
     ax2.set_xlim(combined_index[0],)
     #Set lower y-axis limit to 0
-    #ax2.set_ylim(0,)
+    ax2.set_ylim(0,)
 
     plt.tight_layout()
     plt.show()
 
-def plot_detailed_hydrograph(station_number,variable, historic_df, realtime_df, forecast_df=None,analysis_df=None, threshold_df=None, save_png=False, png_path=None):
+def plot_detailed_hydrograph(station_number,variable, historic_df, realtime_df, forecast_df=None,analysis_df=None, threshold_df=None,forecast_bias_corrected_df=None, save_png=False, png_path=None):
 
     historic_range_df = calculate_daily_percentiles_of_historic_data(historic_df,variable)
 
@@ -179,9 +184,12 @@ def plot_detailed_hydrograph(station_number,variable, historic_df, realtime_df, 
     if forecast_df is not None:
         forecast_df = convert_to_daily_mean(forecast_df,'Discharge',date_col='time')
 
+    if forecast_bias_corrected_df is not None:
+        forecast_bias_corrected_df = convert_to_daily_mean(forecast_bias_corrected_df,'Discharge',date_col='time')
+
     if analysis_df is not None:
         analysis_df = convert_to_daily_mean(analysis_df,'Discharge',date_col='time')
 
-    plot_annual_hydrograph_statistics(station_number, variable, historic_range_df, realtime_daily_df,forecast_df,analysis_df, threshold_df, save_png, png_path)
+    plot_annual_hydrograph_statistics(station_number, variable, historic_range_df, realtime_daily_df,forecast_df,analysis_df,threshold_df,forecast_bias_corrected_df, save_png, png_path)
 
     return None

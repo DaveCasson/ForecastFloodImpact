@@ -1,0 +1,54 @@
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   EXPLORATORY DATA ANALYSIS (EDA) REPORT   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+------------------------- Change Points in the time series -------------------------
+Data Sample Size: 111
+
+The Mann-Whitney-Pettitt test indicated a significant change point (abrupt change in the mean of time series) at the year 1974.
+P-value: < 0.01.
+
+The Mann-Kendall Sneyers test indicated absence of change points (beginning of a trend in the mean of time series).
+ P-value: 1
+
+Decision point: The entire time series was deemed homogenous and was not split.
+
+-------------------------  Indentification of trends in the mean  -------------------------
+Sample size: 111
+
+The Mann-Kendall test indicated a significant trend in the mean.
+P-value: < 0.01
+The Spearman correlation test indicated significant serial correlation in the time series
+Maximum significant lag: 2
+The Block-bootstrap Mann-Kendall test indicated the trend in mean is significant despite serial correlation.
+P-value: < 0.01
+
+Sens trend estimator:
+Slope = -1.69
+Intercept = 432.43
+
+The PP and KPSS tests suggest that the trend is due to potential long-range dependence or non-linear nonstationarity
+Phillips–Perron (PP) P-value: < 0.01
+Kwiatkowski–Phillips–Schmidt–Shin (KPSS) P-value: 0.01
+
+-------------  Indentification of trends in the variability (standard deviation)  -------------
+Sample size: 21
+
+The White test indicated the time series is HOMOSCEDASTIC, suggesting absence of trend in the variability of the time series.
+P-value: 0.32.
+
+The Moving-Window Mann-Kendall test indicated absence of trend in the variability of the time series.
+P-value: 0.88
+
+Sens trend estimator:
+Slope = 0.58
+Intercept = 109.84
+
+********************************************************
+
+A significant trend in the mean was detected. The evidence suggests potential nonstationarity.
+Recommendation: consider using NS-FFA - model consisting of a distribution with a varying location parameter.
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF REPORT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,0 +1,52 @@
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   EXPLORATORY DATA ANALYSIS (EDA) REPORT   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+------------------------- Change Points in the time series -------------------------
+Data Sample Size: 114
+
+The Mann-Whitney-Pettitt test indicated a significant change point (abrupt change in the mean of time series) at the year 1974.
+P-value: 0.05.
+
+The Mann-Kendall Sneyers test indicated absence of change points (beginning of a trend in the mean of time series).
+ P-value: 0.11
+
+Decision point: The entire time series was deemed homogenous and was not split.
+
+-------------------------  Indentification of trends in the mean  -------------------------
+Sample size: 114
+
+The Mann-Kendall test indicated a significant trend in the mean.
+P-value: 0.03
+The Spearman correlation test indicated absence of serial correlation.
+Thus, the Block-Bootstrap Mann-Kendall test was not performed.
+
+Sens trend estimator:
+Slope = -0.36
+Intercept = 222.17
+
+The PP and KPSS tests suggest that the trend is deterministic, suggesting it is due to (linear) nonstationarity.
+Phillips–Perron (PP) P-value: 0.03
+Kwiatkowski–Phillips–Schmidt–Shin (KPSS) P-value: 0.1
+
+-------------  Indentification of trends in the variability (standard deviation)  -------------
+Sample size: 21
+
+The White test indicated the time series is HOMOSCEDASTIC, suggesting absence of trend in the variability of the time series.
+P-value: 0.26.
+
+The Moving-Window Mann-Kendall test indicated absence of trend in the variability of the time series.
+P-value: 0.98
+
+Sens trend estimator:
+Slope = -0.05
+Intercept = 53.78
+
+********************************************************
+
+A significant trend in the mean was detected. The evidence suggests potential nonstationarity in the form of a deterministic linear trend.
+Recommendation: use NS-FFA - model consisting of a distribution with a varying location parameter.
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF REPORT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

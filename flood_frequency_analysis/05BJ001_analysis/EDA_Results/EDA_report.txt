@@ -1,0 +1,46 @@
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   EXPLORATORY DATA ANALYSIS (EDA) REPORT   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+------------------------- Change Points in the time series -------------------------
+Data Sample Size: 114
+
+The Mann-Whitney-Pettitt test indicated absence of change points (abrupt change in the mean of time series).
+P-value: 0.26.
+
+The Mann-Kendall Sneyers test indicated absece of change points (beginning of a trend in the mean of time series).
+P-value: 0.12.
+
+Decision point: The entire time series was deemed homogenous and was not split.
+
+-------------------------  Indentification of trends in the mean  -------------------------
+Sample size: 114
+
+The Mann-Kendall test indicated absence of trend in the mean.
+P-value: 0.95
+
+Sens trend estimator:
+Slope = -0.01
+Intercept = 59.92
+
+-------------  Indentification of trends in the variability (standard deviation)  -------------
+Sample size: 22
+
+The White test indicated the time series is HOMOSCEDASTIC, suggesting absence of trend in the variability of the time series.
+P-value: 0.28.
+
+The Moving-Window Mann-Kendall test indicated absence of trend in the variability of the time series.
+P-value: 1
+
+Sens trend estimator:
+Slope = 0.04
+Intercept = 44
+
+********************************************************
+
+No significant trends were detected. There is no evidence of potential nonstationarity.
+Recommendation: use S-FFA - model consisting of a time-invariant distribution.
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF REPORT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

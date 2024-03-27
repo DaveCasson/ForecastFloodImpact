@@ -7,7 +7,7 @@ paths:
   output_dir: '../data_output/'
   gis_data: '../gis_data/'
 gis_data:
-  hydro_stns_csv: Bow_hydrometric_stns.csv
+  hydro_stns_csv: Bow_hydrometric_stns_select.csv
   nsrps_stns_csv: nsrps_stn_locations.csv
   basins_shp: Bow_Basins.shp
   flowlines_shp: Bow_Flowlines.shp

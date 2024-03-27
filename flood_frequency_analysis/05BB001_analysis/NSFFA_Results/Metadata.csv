@@ -1,0 +1,2 @@
+Dataset,Distribution,ParameterEstimationMethod,UncertaintyQuantificationMethod
+05BB001.csv,PE3100,Maximum Likelihood (default),Regula-Falsi Profile Likelihood (default)

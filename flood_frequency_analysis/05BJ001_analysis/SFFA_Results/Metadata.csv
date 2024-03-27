@@ -1,0 +1,2 @@
+Dataset,Distribution,ParameterEstimationMethod,UncertaintyQuantificationMethod
+05BJ001.csv,GNO,L-Moments (default),Parametric Bootstrap (default)
